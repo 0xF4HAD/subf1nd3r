@@ -12,7 +12,7 @@ cat << "EOF"
                         ░                        ░                      
 EOF
 echo -e "\e[0m"
-echo -e "\e[1;32m Welcome to subf1nd3r - Make Your Subdomain Hunting Faster & Easy! 🔍 \e[0m"
+echo -e "\e[1;32m Welcome to subf1nd3r - Make Your Subdomain & JS Hunting Faster & Easy! 🔍 \e[0m"
 
 
 
@@ -79,12 +79,16 @@ echo -e "\e[1;32m Welcome to subf1nd3r - Make Your Subdomain Hunting Faster & Ea
     gau --subs $url | grep '.js$' >> $url/Subdomains/js/gaujs.txt
     waybackurls $url | grep '.js$' >> $url/Subdomains/js/waybackjs.txt
     subfinder -d $url -silent | httpx | subjs >> $url/Subdomains/js/subjs.txt
-    cat $url/Subdomains/js/js.txt $url/Subdomains/js/gaujs.txt $url/Subdomains/js/waybackjs.txt $url/Subdomains/js/subjs.txt  | sort -u >> finaljs.txt
+    cat $url/Subdomains/js/js.txt $url/Subdomains/js/gaujs.txt $url/Subdomains/js/waybackjs.txt $url/Subdomains/js/subjs.txt  | sort -u >> $url/Subdomains/js/finaljs.txt
 
     #manually Collect Domains from 
     #--> https://subdomainfinder.c99.nl/   (jq -r '.[].subdomain' example.json | grep -v '^null$' > c99.txt)
     # nuclei -l js.txt -t ~/.local/nuclei-templates/javascript -s critical,high,medium,low (nuclei) 
     # cat final.txt | httpx -sc -td -title -probe -fhr -location  -mc 200
-
-
-   
+  
+  
+  #Find mass leaked AWS s3 bucket from js File
+  #  cat $url/Subdomains/js/finaljs.txt | xargs -I% bash -c 'curl -sk "%" | grep -w "*.s3.amazonaws.com"' >> $url/Subdomains/js/s3_bucket.txt
+  #  cat $url/Subdomains/js/finaljs.txt | xargs -I% bash -c 'curl -sk "%" | grep -w "*.s3.us-east-2.amazonaws.com"' >> $url/Subdomains/js/s3_bucket.txt
+  #  cat $url/Subdomains/js/finaljs.txt | xargs -I% bash -c 'curl -sk "%" | grep -w "s3.amazonaws.com/*"' >> $url/Subdomains/js/s3_bucket.txt
+  #  cat $url/Subdomains/js/finaljs.txt| xargs -I% bash -c 'curl -sk "%" | grep -w "s3.us-east-2.amazonaws.com/*"' >> $url/Subdomains/js/s3_bucket.txt
