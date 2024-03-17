@@ -74,6 +74,7 @@ echo -e "\e[1;32m Welcome to subf1nd3r - Make Your Subdomain Hunting Faster & Ea
     cat $url/Subdomains/final.txt | httpx -sc -td -title -probe -fhr -location  -mc 200 >> $url/Subdomains/httpxinfo.txt
 
     # JavaScript file extract 
+    echo -e "$YELLOW[+] Harvesting JavaScript File  with Katana|Gau|waybackurls|subjs ...$RESET"
     cat $url/Subdomains/final.txt | katana | grep js | httpx -mc 200 | tee $url/Subdomains/js/js.txt
     gau --subs $url | grep '.js$' >> $url/Subdomains/js/gaujs.txt
     waybackurls $url | grep '.js$' >> $url/Subdomains/js/waybackjs.txt
