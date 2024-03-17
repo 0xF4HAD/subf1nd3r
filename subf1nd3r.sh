@@ -33,6 +33,9 @@ echo -e "\e[1;32m Welcome to subf1nd3r - Make Your Subdomain Hunting Faster & Ea
     if [ ! -d "$url/Subdomains/recon" ];then
         mkdir $url/Subdomains/recon
     fi
+    if [ ! -d "$url/Subdomains/js" ];then
+        mkdir $url/Subdomains/js
+    fi
    
     
 
@@ -57,6 +60,7 @@ echo -e "\e[1;32m Welcome to subf1nd3r - Make Your Subdomain Hunting Faster & Ea
     #amass enum -passive -d $url | tee -a $url/Subdomains/amass.txt
     curl -s https://crt.sh/\?q\=%25.$url\&output\=json | jq -r '.[].name_value' | sed 's/\*\.//g' | sort -u >> $url/Subdomains/crt.txt
     cat $url/Subdomains/assetfinder.txt  $url/Subdomains/sublist3r.txt $url/Subdomains/subfinder.txt $url/Subdomains/crt.txt $url/Subdomains/findomain.txt $url/Subdomains/githubsubdomain.txt | anew $url/Subdomains/final.txt
+    rm -rf $url/Subdomains/assetfinder.txt  $url/Subdomains/sublist3r.txt $url/Subdomains/subfinder.txt $url/Subdomains/crt.txt $url/Subdomains/findomain.txt $url/Subdomains/githubsubdomain.txt
     
     # jq -r 'keys[]' input.json | grep -v '^"$' > subdomains.txt
     echo -e "$YELLOW[+] Harvesting subdomains with Knockpy ...$RESET"
@@ -69,9 +73,17 @@ echo -e "\e[1;32m Welcome to subf1nd3r - Make Your Subdomain Hunting Faster & Ea
     cat $url/Subdomains/final.txt | httpx -mc 200 | sort -u  >> $url/Subdomains/recon/httpx_alive.txt
     cat $url/Subdomains/final.txt | httpx -sc -td -title -probe -fhr -location  -mc 200 >> $url/Subdomains/httpxinfo.txt
 
-    
+    # JavaScript file extract 
+    cat $url/Subdomains/final.txt | katana | grep js | httpx -mc 200 | tee $url/Subdomains/js/js.txt
+    gau --subs $url | grep '.js$' >> $url/Subdomains/js/gaujs.txt
+    waybackurls $url | grep '.js$' >> $url/Subdomains/js/waybackjs.txt
+    subfinder -d $url -silent | httpx | subjs >> $url/Subdomains/js/subjs.txt
+    cat $url/Subdomains/js/js.txt $url/Subdomains/js/gaujs.txt $url/Subdomains/js/waybackjs.txt $url/Subdomains/js/subjs.txt  | sort -u >> finaljs.txt
 
     #manually Collect Domains from 
     #--> https://subdomainfinder.c99.nl/   (jq -r '.[].subdomain' example.json | grep -v '^null$' > c99.txt)
     # nuclei -l js.txt -t ~/.local/nuclei-templates/javascript -s critical,high,medium,low (nuclei) 
     # cat final.txt | httpx -sc -td -title -probe -fhr -location  -mc 200
+
+
+   
