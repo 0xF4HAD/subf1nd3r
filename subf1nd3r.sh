@@ -106,18 +106,18 @@ echo -e "\e[1;32m Welcome to subf1nd3r - Make Your Subdomain & JS Hunting Faster
     echo -e "$YELLOW[+] Subdomain Bruteforce using shuffledns ...$RESET"
     shuffledns -d $url -w /root/wordlist/subdomain/all.txt -r /root/tools/massdns/lists/resolvers.txt -o $url/Subdomains/shuffledns.txt 
 
-    cat $url/Subdomains/assetfinder.txt $url/Subdomains/amass.txt  $url/Subdomains/sublist3r.txt $url/Subdomains/subfinder.txt $url/Subdomains/crt.txt $url/Subdomains/findomain.txt $url/Subdomains/githubsubdomain.txt $url/Subdomains/waybacksubdomain.txt $url/Subdomains/certspotter.txt $url/Subdomains/jldc.txt $url/Subdomains/anubis.txt $url/Subdomains/Hackertarget.txt $url/Subdomains/otx.txt $url/Subdomains/gobuster.txt  $url/Subdomains/shuffledns.txt | anew $url/Subdomains/final1.txt
+    cat $url/Subdomains/assetfinder.txt $url/Subdomains/amass.txt  $url/Subdomains/sublist3r.txt $url/Subdomains/subfinder.txt $url/Subdomains/crt.txt $url/Subdomains/findomain.txt $url/Subdomains/githubsubdomain.txt $url/Subdomains/waybacksubdomain.txt $url/Subdomains/certspotter.txt $url/Subdomains/jldc.txt $url/Subdomains/anubis.txt $url/Subdomains/Hackertarget.txt $url/Subdomains/otx.txt $url/Subdomains/gobuster.txt  $url/Subdomains/shuffledns.txt | anew $url/Subdomains/final.txt
 
     # Generate Permutations with dnsGen (Overall Best Way)
-    echo -e "$RED[🔍++++++++🔍] Subdomains Permutations...🔍$RESET"
-    dnsgen $url/Subdomains/final1.txt >> $url/Subdomains/dnsgen_wordlist.txt
+    #echo -e "$RED[🔍++++++++🔍] Subdomains Permutations...🔍$RESET"
+    #dnsgen $url/Subdomains/final1.txt >> $url/Subdomains/dnsgen_wordlist.txt
 
     #Find Resolvable Domains with MassDNS
-    echo -e "$RED[🔍++++++++🔍] Find Resolvable Domains...🔍$RESET"
-    massdns -r /root/tools/massdns/lists/resolvers.txt -t A -o S $url/Subdomains/dnsgen_wordlist.txt -w $url/Subdomains/livesub.txt
-    sed 's/A.*//' livesub.txt | sed 's/CN.*//' | sed 's/\..$//' | sort -u >> $url/Subdomains/final.txt
+    #echo -e "$RED[🔍++++++++🔍] Find Resolvable Domains...🔍$RESET"
+    #massdns -r /root/tools/massdns/lists/resolvers.txt -t A -o S $url/Subdomains/dnsgen_wordlist.txt -w $url/Subdomains/livesub.txt
+    #sed 's/A.*//' livesub.txt | sed 's/CN.*//' | sed 's/\..$//' | sort -u >> $url/Subdomains/final.txt
 
-    # rm -rf $url/Subdomains/assetfinder.txt $url/Subdomains/amass.txt  $url/Subdomains/sublist3r.txt $url/Subdomains/subfinder.txt $url/Subdomains/crt.txt $url/Subdomains/findomain.txt $url/Subdomains/githubsubdomain.txt $url/Subdomains/waybacksubdomain.txt $url/Subdomains/certspotter.txt $url/Subdomains/jldc.txt $url/Subdomains/anubis.txt $url/Subdomains/Hackertarget.txt $url/Subdomains/otx.txt $url/Subdomains/gobuster.txt  $url/Subdomains/shuffledns.txt $url/Subdomains/dnsgen_wordlist.txt 
+    rm -rf $url/Subdomains/assetfinder.txt $url/Subdomains/amass.txt  $url/Subdomains/sublist3r.txt $url/Subdomains/subfinder.txt $url/Subdomains/crt.txt $url/Subdomains/findomain.txt $url/Subdomains/githubsubdomain.txt $url/Subdomains/waybacksubdomain.txt $url/Subdomains/certspotter.txt $url/Subdomains/jldc.txt $url/Subdomains/anubis.txt $url/Subdomains/Hackertarget.txt $url/Subdomains/otx.txt $url/Subdomains/gobuster.txt  $url/Subdomains/shuffledns.txt 
   
     # jq -r 'keys[]' input.json | grep -v '^"$' > subdomains.txt
     echo -e "$YELLOW[+] Harvesting subdomains with Knockpy ...$RESET"
@@ -126,7 +126,7 @@ echo -e "\e[1;32m Welcome to subf1nd3r - Make Your Subdomain & JS Hunting Faster
     # Probing for alive domains
     echo -e "$YELLOW[+] Probing for alive domains...$RESET"
     cat $url/Subdomains/final.txt | httprobe -c 50 -p 8080,8081,8089 | tee $url/Subdomains/recon/http.servers
-    cat $url/Subdomains/final.txt | httpx -sc -td -title -probe -fhr -location  -mc 200 >> $url/Subdomains/httpxinfo.txt
+    cat $url/Subdomains/final.txt | httpx -sc -td -title -probe -fhr -location  -mc 200 >> $url/Subdomains/recon/httpxinfo.txt
     httpx -l $url/Subdomains/final.txt -ports 443,80,8080,8000,8888 -threads 200 > $url/Subdomains/recon/alive_subdomain.txt
 
     #  Extract Params
@@ -164,7 +164,7 @@ echo -e "\e[1;32m Welcome to subf1nd3r - Make Your Subdomain & JS Hunting Faster
     echo -e "$YELLOW[+] Harvesting OWASP Top 10 Path (SSRF,LFI,XSS,SSTI,SQLi,RCE,IDOR,SubdomainTakeOver)  ...$RESET"
     cat $url/Subdomains/param/filterparam.txt | gf ssrf | sort -u |anew $url/Subdomains/OWASP/ssrf.txt
     cat $url/Subdomains/param/filterparam.txt | gf lfi | sort -u |anew  $url/Subdomains/OWASP/lfi.txt
-    cat $url/Subdomains/param/filterparam.txt | gf xss | sort -u |anew  $url/Subdomains/OWASP/xss.txt
+    cat $url/Subdomains/param/filterparam.txt | gf xss | uro | grep -v -e "jpg" -e "jpeg" -e "gif" -e "css" -e "tif" -e "tiff" -e "png" | qsreplace -a | httpx -silent | tee  $url/Subdomains/OWASP/xss.txt
     cat $url/Subdomains/param/filterparam.txt | gf ssti | sort -u |anew  $url/Subdomains/OWASP/ssti.txt
     cat $url/Subdomains/param/filterparam.txt | gf sqli | sort -u |anew  $url/Subdomains/OWASP/sqli.txt
     cat $url/Subdomains/param/filterparam.txt | gf rce | sort -u |anew   $url/Subdomains/OWASP/rce.txt
